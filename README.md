@@ -96,3 +96,72 @@ curl -XGET -S 'http://localhost:9200/_analyze?analyzer=whitespace&pretty=true' -
 	}
 }
 
+*********
+'query':{
+	'query_string':{
+		'query':'tacos'
+	}
+}
+
+************
+
+'query':{
+	'query_string':{
+		'query':'tacos',
+		'fields':['tags']
+	}
+}
+
+***************************
+
+'query':{
+	'filtered':{
+		'filter':{
+			'range':{
+				'rating':{
+					'gte':4.0
+				}
+			}
+		},
+		'query':{
+			'query_string':{
+				'query':'tacos',
+				'fields':['tags']
+			}
+		}
+	}
+}
+
+****************************
+
+'query':{
+	'filtered':{
+		'filter':{
+			'range':{
+				'rating':{
+					'gte':4.0
+				}
+			}
+		}
+	}
+}
+
+******************************
+
+'query':{
+	'filtered':{
+		'query':{
+			'match':{
+				'address.state':'ny'
+			}
+		},
+		'filter':{
+			'range':{
+				'rating':{
+					'gte':4.0
+				}
+			}
+		}
+	}
+}
+
