@@ -53,3 +53,46 @@ curl -XGET -S 'http://localhost:9200/_analyze?analyzer=whitespace&pretty=true' -
 		]
 	}
 }
+
+************************
+
+'query':{
+	'match_all':{}
+
+},
+'aggs':{
+	'by_city':{
+		'terms':{
+			'field':'city'
+		}
+	},
+	'by_price':{
+		'histogram':{
+			'field': 'price',
+			'interval':10
+		}
+	}
+}
+
+************
+
+'query':{
+	'match_all':{}
+
+},
+'aggs':{
+	'by_city':{
+		'terms':{
+			'field':'city'
+		}
+	},
+	'aggs':{
+		'by_price':{
+			'histogram':{
+				'field': 'price',
+				'interval':10
+			}
+		}
+	}
+}
+
