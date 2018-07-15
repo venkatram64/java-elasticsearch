@@ -165,3 +165,265 @@ curl -XGET -S 'http://localhost:9200/_analyze?analyzer=whitespace&pretty=true' -
 	}
 }
 
+****************
+
+curl -XGET localhost:9200/?pretty
+
+GET /_search?size=5&from=0
+
+GET /_search?size=5&from=10
+
+GET /_search?q=name:john
+
+GET /_search?q=date:2018-06-05
+
+GET /myapp/tweet/_mapping
+
+add new fields
+
+can not change fields
+
+delete and recreate index
+
+PUT /myapp/tweet/_mapping -d '
+{
+	'tweet':{
+		'properties':{
+			....
+		}
+	}
+}
+'
+
+full body search
+
+GET /_search -d '
+{
+	'query':{
+		'match_all':{}
+	},
+	'from': 0,
+	'size':10
+}
+'
+
+Filters:
+exact matching
+binary yes / no
+fast
+cacheable
+
+Queries:
+full text search
+relevance scoring
+heavier
+not cacheable
+
+combine filter & query
+
+GET /_search -d '
+{
+	'query':{
+		'filtered':{
+			'query':{
+				'match':{
+					'tweet': 'search'
+				}
+			},
+			'filter':{
+				'term':{
+					'nick':'@venkat'
+				}
+			}
+		}
+	}
+}
+'
+
+******************
+
+
+
+GET /_search -d '
+{
+	'query':{
+		'filtered':{
+			'query':{
+				'match_all':{}
+			},
+			'filter':{
+				'term':{
+					'nick':'@venkat'
+				}
+			}
+		}
+	}
+}
+'
+
+**************************
+
+GET /_search -d '
+{
+	'query':{
+		'filtered':{
+			'filter':{
+				'term':{
+					'nick':'@venkat'
+				}
+			}
+		}
+	}
+}
+'
+
+******************************
+
+GET /_search -d '
+{
+	'query':{
+		'filtered':{
+			'filter':{
+				'term':{
+					'nick':'@venkat'
+				}
+			}
+		}
+	},
+	'sort':{'date':'desc'}
+}
+'
+
+***********************************
+tweets for last month
+
+GET /_search -d '
+{
+	'query':{
+		'filtered':{
+			'filter':{
+				'range':{
+					'date':{
+						'gte':'2013-05-01',
+						'lt': '2013-06-01'
+					}
+				}
+			}
+		}
+	}
+}
+'
+
+***********************************
+top tweeters for query about elastic search
+
+GET /_all/tweet/_search -d '
+{
+	'facets':{
+		'top_tweets':{
+			'terms':{
+				'field':'nick'
+			}
+		}
+	},
+	'query':{
+		'match':{
+			'tweet': 'elasticsearch'
+		}
+	}
+}'
+
+***********************************
+tweets by month
+
+GET /_all/tweet/_search -d '
+{
+	'facets':{
+		'tweets_by_month':{
+			'date_histogram':{
+				'field':'date',
+				'interval': 'month'
+			}
+		}
+	}
+}'
+
+*******************
+
+edge N-Gram token filter
+
+{
+	'filter':{
+		'autocomplete':{
+			'type': 'edge_ngram',
+			'min_gram':1,
+			'max_gram':20
+		}
+	}
+}
+
+name field analyzers
+
+{
+	'analyzer':{
+		'name':{
+			'type': 'standard',
+			'stopwords:[]
+		},
+		'name_autocomplete':{
+			'type': 'custom',
+			'tokenizer': 'standard',
+			'filter':['lowercase', 'autocomplete']
+		}
+	}
+}
+
+name field mapping
+
+{
+	'name':{
+		'type':'multi_field',
+		'fields':{
+			'name':{
+				'type': 'string',
+				'analyzer': 'name'
+			},
+			'autocomplete':{
+				'type': 'string',
+				'index_analyzer': 'name_autocomplete',
+				'search_analyzer': 'name'
+			}
+		}
+	}
+}
+
+****************
+
+autocomplete query
+
+{
+	'bool':{
+		'must':[{}],
+		'must_not':[{}],
+		'should':[{}]
+	}
+}
+**************
+
+autocomplete query
+
+{
+	'bool':{
+		'must':{
+			'match':{
+				'name.autocomplete': 'john smi'
+			}
+		},
+		'should':{
+			'match': {
+				'name': 'john smi'
+			}
+		}
+	}
+}
+
