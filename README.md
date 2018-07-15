@@ -427,3 +427,43 @@ autocomplete query
 	}
 }
 
+****************
+sudo apt-get install defulat-jdk
+
+
+wget -qO - https://artifacts.elasticco/GPG-KEY-elasticsearch | sudo apt-key add - 
+
+sudo apt-get install apt-transport-https
+
+
+echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list
+
+sudo apt-get update && apt-get install elasticsearch
+
+vi /etc/elasticsearch/elasticsearch.yml
+
+
+sudo /bin/systemctl start elasticsearch.service
+
+curl 127.0.0.1:9200
+
+wget http://media.sundog-soft.com/es6/shakes-mapping.json
+
+curl -H "Content-Type: application/json" -XPUT 127.0.0.1:9200/shakespeare --data-binary @shakes-mapping.json
+
+wget http://media.sundog-soft.com/es6/shakespeare_6.0.json
+
+curl -H 'Content-Type: application/json' -XPOST 'localhost:9200/shakespeare/doc/_bulk?pretty' --data-binary @shakespeare_6.0.json
+
+http://localhost:9200/shakespeare/_search?pretty
+
+curl -H "Content-Type: application/json" -XGET '127.0.0.1:9200/shakespeare/_search?pretty' -d '
+{
+	"query":{
+		"match_phrase":{
+			"text_entry": "to be or not to be"
+		}
+	}
+}
+'
+
