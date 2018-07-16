@@ -112,7 +112,13 @@ edge n-grams are built only on the beginning of each term.
 
 create an "autocomplete analyzer"
 
-curl -XPUT '127.0.0.1:9200/movies?pretty' -d'
+step 1: 
+
+curl -XDELETE 127.0.0.1:9200/movies
+
+step 2:
+
+curl -XPUT '127.0.0.1:9200/movies?pretty' -d '
 {
 	"settings":{
 		"analysis":{
@@ -139,6 +145,14 @@ curl -XPUT '127.0.0.1:9200/movies?pretty' -d'
 '
 
 ***************apply autocomplete n-gram ************
+step 3:
+curl -XGET 127.0.0.1:9200/movies/_analyze?pretty -d '
+{
+	"analyzer":"autocomplete",
+	"text": "Sta"
+}
+'
+
 
 curl -XPUT '127.0.0.1:9200/movies/_mapping/movie?pretty' -d '
 {
@@ -163,50 +177,6 @@ curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
 				"query":"sta",
 				"analyzer":"standard"
 			}
-		}
-	}
-}
-'
-
-*****************fuzzy matches **********************
-a way to account for typos and misspellings
-the levenshtein edit distance accounts for:
-
-substitutions:
-insertions
-deletion
-
-curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
-{
-	"query":{
-		"fuzzy":{
-			"title":{
-				"value":"intrsteller","fuzziness":2
-			}
-		}
-	}
-}
-'
-
-**************partial query **************
-
-curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
-{
-	"query":{
-		"prefix":{
-			"year":"201"
-		}
-	}
-}
-'
-
-**************wildcard query **************
-
-curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
-{
-	"query":{
-		"wildcard":{
-			"year":"1*"
 		}
 	}
 }
