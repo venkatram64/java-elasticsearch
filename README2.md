@@ -145,6 +145,9 @@ curl -XPUT '127.0.0.1:9200/movies?pretty' -d '
 '
 
 ***************apply autocomplete n-gram ************
+
+
+
 step 3:
 curl -XGET 127.0.0.1:9200/movies/_analyze?pretty -d '
 {
