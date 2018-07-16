@@ -466,4 +466,99 @@ curl -H "Content-Type: application/json" -XGET '127.0.0.1:9200/shakespeare/_sear
 	}
 }
 '
+******************************
+sudo apt-get install openssh-server
+
+https://grouplens.org/datasets/movielens/
+
+curl -H "Content-Type: application/json" -XPUT 127.0.0.1:9200/movies -d '
+{
+	"mappings":{
+		"movie":{
+			"properties":{
+				"year":{
+					"type":"date"
+				}
+			}
+		}
+	}
+}
+'
+
+****************
+
+curl -H "Content-Type: application/json" -XGET 127.0.0.1:9200/movies/_mapping/movie?pretty
+
+curl -XPUT 127.0.0.0.1:9200/movies/movie/109487 -d '
+	{
+		"genere": ["IMAX","Sci-Fi"],
+		"title": "Intersteller",
+		"year": 2014
+	}
+'
+
+****************
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty
+
+
+wget http://media.sundog-soft.com/es/movies.json
+
+curl -XPUT 127.0.0.1:9200/_bulk?pretty --data-binary @movies.json
+
+***************
+
+curl -XPOST 127.0.0.1:9200/movies/movie/109487/_update -d '
+{
+	"doc":{
+		"title":"Intersteller woo"
+	}
+}
+'
+
+curl -XDELETE 127.0.0.1:9200/movies/movie/58559
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty&q=Dark
+
+***************************CRUD************
+
+curl -XPUT 127.0.0.1:9200/movies/movie/2000?pretty -d '
+{
+	"title":"Little master",
+	"genere":["Documentory"],
+	"year":2018
+}
+'
+
+**********************
+curl -XGET 127.0.0.1:9200/movies/movie/2000?pretty
+
+*****************************************
+curl -XPOST 127.0.0.1:9200/movies/movie/2000/_update -d '
+{
+	"doc":{
+		"genere":["Documentory","Comedy"]
+	}
+}
+'
+
+**********************
+curl -XDELETE 127.0.0.1:9200/movies/movie/2000?pretty
+
+********************UPDATE with version
+
+curl -XPUT 127.0.0.1:9200/movies/movie/109487?version=3 -d '
+{
+	"genere":["IMAX","Sci-Fi"],
+	"title": "Intersteller Foo",
+	"year" : 2014
+}
+'
+
+**************************
+
+curl -XPOST 127.0.0.1:9200/movies/movie/109487/_update?retry_on_conflict=5 -d '
+{
+	"title": "Intersteller"
+}
+'
 
