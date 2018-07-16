@@ -156,6 +156,8 @@ curl -XGET 127.0.0.1:9200/movies/_analyze?pretty -d '
 }
 '
 
+step 4:
+
 
 curl -XPUT '127.0.0.1:9200/movies/_mapping/movie?pretty' -d '
 {
@@ -169,6 +171,11 @@ curl -XPUT '127.0.0.1:9200/movies/_mapping/movie?pretty' -d '
 	}
 }
 '
+
+step 5:  loading data
+
+curl -XPUT 127.0.0.1:9200/_bulk --data-binary @movies.json
+
 
 but only use n-grams on the index side
 
