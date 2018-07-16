@@ -561,4 +561,194 @@ curl -XPOST 127.0.0.1:9200/movies/movie/109487/_update?retry_on_conflict=5 -d '
 	"title": "Intersteller"
 }
 '
+*****************
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match":{
+			"title": "Start Trek"
+		}
+	}
+}
+'
+
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match_phrase":{
+			"genere": "sci"
+		}
+	}
+}
+'
+
+***********************
+DELETE index
+
+curl -XDELETE 127.0.0.1:9200/movies
+
+creating new anlyzer
+
+curl -XPUT 127.0.0.1:9200/movies -d '
+{
+	"mappings":{
+		"movie":{
+			"properties":{
+				"id":{"type":"integer"},
+				"year":{"type":"date"}
+				"genere":{"type":"keyword"},
+				"title":{"type":"text","analyzer":"english"
+			}
+		}
+	}
+}
+'
+
+*****************************loading data
+curl -XPUT 127.0.0.1:9200/_bulk?pretty --date-binary @movies.json
+
+**************************Elastic Search Parent Child relationship ****************
+
+curl -XPUT 127.0.0.1:9200/series -d '
+{
+	"mappings":{
+		"movie":{
+			"properties":{
+				"film_to_franchise": {
+					"type": "join",
+					"relations": {
+						"franchise": "film"
+					}
+				}
+			}
+		}
+	}
+}
+'
+
+***************
+wget http://media.sundog-soft.com/es6/series.json
+
+****loading data *************
+
+curl -XPUT 127.0.0.1:9200/_bulk?pretty --data-binary @series.json
+
+*************
+curl -XGET 127.0.0.1:9200/series/movie/_search?pretty -d '
+{
+	"query":{
+		"has_parent":{
+			"parent_type":"franchise",
+			"query":{
+				"match":{
+					"titile":"Star Wars"
+				}
+			}
+		}
+	}
+}
+'
+
+*******************
+curl -XGET 127.0.0.1:9200/series/movie/_search?pretty -d '
+{
+	"query":{
+		"has_child":{
+			"type":"film",
+			"query":{
+				"match":{
+					"titile":"The Force Awakens"
+				}
+			}
+		}
+	}
+}
+'
+
+***********************
+curl -XGET "127.0.0.1:9200/movies/movie/_search?q=title:star&pretty"
+
+curl -XGET "127.0.0.1:9200/movies/movie/_search?q=+year:>2010+title:trek&pretty"
+
+**********request body search ********************
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match":{
+			"titile":"star"
+		}
+	}
+}
+'
+*********************************
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"bool":{
+			"must":{
+				"term":{
+					"title":"trek"
+				},
+				"filter":{
+					"range":{
+						"year":{
+							"gte":2010
+						}
+					}
+				}
+			}
+		}
+	}
+}
+'
+********Some type of filters *************************
+
+term, terms,range, exists, missing, bool
+
+********Some type of query *************************
+
+match_all, match, multi_match, bool
+
+**************************************************
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match_phrase":{
+			"titile":"star wars"
+		}
+	}
+}
+'
+*********************************
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match_phrase":{
+			"titile":{
+				"query":"star beyond",
+				"slop": 1
+			}
+		}
+	}
+}
+'
+***********pagination**********************
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"from":2,
+	"size":2,
+	"query":{
+		"match":{
+			"genere":"Sci-Fi"
+		}
+	}
+}
+'
+*********************************
 
