@@ -82,6 +82,91 @@ curl -XGET 127.0.0.1:9200/movies/movie/_search?sort=title.raw&pretty' -d '
 	}
 }
 '
+***********
+query time search as you type
+
+curl -XGET '127.0.0.1:9200/movies/movie/_search?pretty' -d '
+{
+	"query":{
+		"match_phrase_prefix":{
+			"title":{
+				"query":"star trek",
+				"slop":10
+			}
+		}
+	}
+}
+'
+
+index time with N-grams
+
+unigram:  s,t,a,r
+
+bigram: st,ta,ar
+
+trigram: sta, tar
+
+4-gram: star
+
+edge n-grams are built only on the beginning of each term.
+
+create an "autocomplete analyzer"
+
+curl -XPUT '127.0.0.1:9200/movies?pretty' -d'
+{
+	"settings":{
+		"analysis":{
+			"filter":{
+				"autocomplete_filter":{
+					"type":"edge_ngram",
+					"min_gram":1,
+					"max_gram":20
+				}
+			},
+			"analyzer":{
+				"autocomplete":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":[
+						"lowercase",
+						"autocomplete_filter"
+					]
+				}
+			}
+		}
+	}
+}
+'
+
+***************apply autocomplete n-gram ************
+
+curl -XPUT '127.0.0.1:9200/movies/_mapping/movie?pretty' -d '
+{
+	"movie":{
+		"properties":{
+			"title":{
+				"type":"string",
+				"analyzer":"autocomplete"
+			}
+		}
+	}
+}
+'
+
+but only use n-grams on the index side
+
+curl -XGET 127.0.0.1:9200/movies/movie/_search?pretty -d '
+{
+	"query":{
+		"match":{
+			"title":{
+				"query":"sta",
+				"analyzer":"standard"
+			}
+		}
+	}
+}
+'
 
 *****************fuzzy matches **********************
 a way to account for typos and misspellings
