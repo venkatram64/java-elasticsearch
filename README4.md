@@ -191,3 +191,21 @@ curl -XGET '127.0.0.1:9200/logstash-2017.05.01/_search?size=0&pretty' -d '
 	}
 }
 '
+******************************
+curl -XGET '127.0.0.1:9200/logstash-2017.05.05/_search?size=0&pretty' -d '
+{
+	"query":{
+		"match":{
+			"response":500
+		}
+	},
+	"aggs":{
+		"timestamp":{
+			"date_histogram":{
+				"field":"@timestamp",
+				"interval":"minute"
+			}
+		}
+	}
+}
+'
