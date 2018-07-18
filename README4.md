@@ -209,3 +209,91 @@ curl -XGET '127.0.0.1:9200/logstash-2017.05.05/_search?size=0&pretty' -d '
 	}
 }
 '
+********************************
+curl -XGET '127.0.0.1:9200/ratings/rating/_search?size=0&pretty' -d '
+{
+	"query":{
+		"match_phrase":{
+			"title":"Star Wars"
+		}
+	},
+	"aggs":{
+		"titles":{
+			"terms":{
+				"field":"title"
+			},
+			"aggs":{
+				"avg_rating":{
+					"avg":{"field":"rating"}
+				}
+			}
+		}
+	}
+}
+'
+
+above one gives error
+
+so run below one and run above query
+
+curl -XPUT '127.0.0.1:9200/ratings/_mapping/rating?pretty' -d '
+{
+	"properties":{
+		"title":{
+			"type": "text",
+			"fielddata":true
+		}
+	}
+}
+'
+
+****************************
+did not work well so reindex the data
+
+step 1:
+
+curl -XDELETE 127.0.0.1:9200/ratings
+
+curl -XPUT '127.0.0.1:9200/ratings' -d '
+{
+	"mappings":{
+		"rating":{
+			"properties":{
+				"title":{
+					"type":"text",
+					"fielddata":true,
+					"fields":{
+						"raw":{
+							"type":"keyword"
+						}
+					}
+				}
+			}
+		}
+	}
+}
+'
+********************************
+curl -XGER 127.0.0.1:9200/ratings/_mapping?pretty
+
+curl -XGET '127.0.0.1:9200/ratings/rating/_search?size=0&pretty' -d '
+{
+	"query":{
+		"match_phrase":{
+			"title":"Star Wars"
+		}
+	},
+	"aggs":{
+		"titles":{
+			"terms":{
+				"field":"title.raw"
+			},
+			"aggs":{
+				"avg_rating":{
+					"avg":{"field":"rating"}
+				}
+			}
+		}
+	}
+}
+'
