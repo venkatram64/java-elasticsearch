@@ -127,4 +127,67 @@ curl -XGET '127.0.0.1:9200/ratings/rating/_search?size=0&pretty' -d '
 	}
 }
 '
+***********************
+curl -XGET '127.0.0.1:9200/ratings/rating/_search?size=0&pretty' -d '
+{
+	"aggs":{
+		"while_ratings":{
+			"histogram":{
+				"field":"rating",
+				"interval":1.0
+			}
+		}
+	}
+}
+'
 
+*******************
+
+curl -XGET '127.0.0.1:9200/movies/movie/_search?size=0&pretty' -d '
+{
+	"aggs":{
+		"release":{
+			"histogram":{
+				"field":"year",
+				"interval":10
+			}
+		}
+	}
+}
+'
+
+******************************
+curl -XGET '127.0.0.1:9200/logstash-2017.05.01/_search?size=0&pretty' -d '
+{
+	"aggs":{
+		"timestamp":{
+			"date_histogram":{
+				"field":"@timestamp",
+				"interval":"hour"
+			}
+		}
+	}
+}
+'
+
+*************************************
+
+when does google scrape me?
+
+curl -XGET '127.0.0.1:9200/logstash-2017.05.01/_search?size=0&pretty' -d '
+{
+	"query":{
+		"match":{
+			"agent":"Googlebot"
+		}
+	},
+	"aggs":{
+		"timestamp":{
+			"date_histogram":{
+				"field":"@timestamp",
+				"interval":"hour"
+			}
+		}
+	}
+}
+'
