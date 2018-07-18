@@ -254,6 +254,9 @@ step 1:
 
 curl -XDELETE 127.0.0.1:9200/ratings
 
+step 2
+
+
 curl -XPUT '127.0.0.1:9200/ratings' -d '
 {
 	"mappings":{
@@ -274,7 +277,11 @@ curl -XPUT '127.0.0.1:9200/ratings' -d '
 }
 '
 ********************************
-curl -XGER 127.0.0.1:9200/ratings/_mapping?pretty
+step 3:Load the data
+python3 IndexRating.py
+
+
+curl -XGET 127.0.0.1:9200/ratings/_mapping?pretty
 
 curl -XGET '127.0.0.1:9200/ratings/rating/_search?size=0&pretty' -d '
 {
