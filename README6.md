@@ -128,3 +128,19 @@ restore a snapshot all indices
 POST /_all/_close
 
 POST _snapsot/backup-repo/snapshot-1/_restore
+
+*****************************
+
+POST /ecommerce/product/1001/_update
+{
+	"doc":{
+		"price":50.00
+	}
+}	
+
+POST /ecommerce/product/_bulk
+{"delete":{"_id":"1"}}
+{"update":{"_id":"1002"}}
+{"doc":{"quantity":11}}
+
+
