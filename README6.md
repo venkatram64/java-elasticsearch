@@ -88,3 +88,37 @@ GET .watcher-history*/_search?pretty
       }
     ]
 }
+*******************************************
+
+create a repository
+
+add it into elasticsearch.yml
+
+path.repo;["/home/<user>/backups"]
+
+PUT _snapshot/backup-repo
+{
+	"type":"fs",
+	"settings":{
+		"location":"home/<user>/backups/backup-repo"
+	}
+}
+
+
+snapshot all open indices:
+
+PUT -snapshot/backup-repo/snapshot-1
+
+get information about a snapshot
+
+GET _snapshot/backup-repo/snapshot-1
+
+monitor snapshot progress
+
+GET _snapshot/backup-repo/snapshot-1/_status
+
+restore a snapshot all indices
+
+POST /_all/_close
+
+POST _snapsot/backup-repo/snapshot-1/_restore
