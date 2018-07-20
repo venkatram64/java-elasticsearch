@@ -48,3 +48,30 @@ GET _search?size=0
     }
   }
 }
+
+**********************************
+
+cd /usr/share/elasticsearch
+
+sudo bin/elasticsearch-plugin install x-pack
+
+sudo vi /etc/elasticsearch/elasticsearch.yml
+(Add xpack.security.enabled:false)
+
+sudo /bin/systemctl stop elasticsearch.service
+
+sudo /bin/systemctl start elasticsearch.service
+
+cd /usr/share/kibana
+sudo -u kibana bin/kibana-plugin install x-pack
+
+sudo /bin/systemctl stop kibana.service
+
+sudo /bin/systemctl start kibana.service
+
+
+*************
+if x pack is installed
+
+username: elastic
+password: changeme
