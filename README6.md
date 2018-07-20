@@ -75,3 +75,16 @@ if x pack is installed
 
 username: elastic
 password: changeme
+
+*******************************
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/cat.html
+
+GET .watcher-history*/_search?pretty
+{
+  "sort":[
+      {
+        "result.execution_time":"desc"
+      }
+    ]
+}
