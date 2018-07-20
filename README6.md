@@ -136,7 +136,9 @@ POST /ecommerce/product/1001/_update
 	"doc":{
 		"price":50.00
 	}
-}	
+}
+
+
 
 POST /ecommerce/product/_bulk
 {"delete":{"_id":"1"}}
